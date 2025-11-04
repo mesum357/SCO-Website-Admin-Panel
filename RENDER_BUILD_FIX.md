@@ -16,38 +16,40 @@ sh: 1: vite: not found
 
 Update your Render build command to one of these options:
 
-### Option 1: Set NODE_ENV before install (Recommended)
+### Option 1: Use npx to find vite (Recommended)
 
 **Build Command:**
 ```bash
-NODE_ENV=development npm install && npm run build
+npm install && npx vite build
+```
+
+This uses `npx` to find vite in `node_modules/.bin`, which works regardless of how dependencies were installed.
+
+### Option 2: Use Bun consistently
+
+If Render is using Bun, use Bun consistently:
+
+**Build Command:**
+```bash
+bun install && bun run build
+```
+
+### Option 3: Set NODE_ENV before install
+
+**Build Command:**
+```bash
+NODE_ENV=development npm install && npx vite build
 ```
 
 This ensures devDependencies are installed before building.
 
-### Option 2: Use npm ci with explicit dev flag
+### Option 4: Disable automatic Bun install
+
+If Bun is interfering, ensure `package-lock.json` exists and is committed to force npm usage:
 
 **Build Command:**
 ```bash
-npm ci --include=dev && npm run build
-```
-
-**Note:** This requires npm 7+ (Render uses npm 9+ by default, so this should work).
-
-### Option 3: Use npm install (simplest)
-
-**Build Command:**
-```bash
-npm install && npm run build
-```
-
-**Important:** Make sure `NODE_ENV` is NOT set to `production` in your environment variables before the build step. You can set it to `production` AFTER installation, or just don't set it during build.
-
-### Option 4: Install dependencies separately
-
-**Build Command:**
-```bash
-npm install --production=false && npm run build
+npm ci && npx vite build
 ```
 
 ## Steps to Fix in Render Dashboard
@@ -56,17 +58,21 @@ npm install --production=false && npm run build
 2. Navigate to "Settings" tab
 3. Scroll to "Build & Deploy" section
 4. Update the **Build Command** to one of the options above
-5. Save changes (this will trigger a new deployment)
+5. **IMPORTANT:** Make sure the entire command is entered correctly:
+   - Full command: `npm install && npx vite build`
+   - Make sure it's `vite build` not `vi build` or `vi`
+   - Copy and paste the entire command to avoid typos
+6. Save changes (this will trigger a new deployment)
 
 ## Recommended Configuration
 
 For Static Site deployment:
 - **Root Directory:** `sco-admin-dashboard`
-- **Build Command:** `NODE_ENV=development npm install && npm run build`
+- **Build Command:** `npm install && npx vite build`
 - **Publish Directory:** `dist`
 - **Environment Variables:**
   - `VITE_API_URL=https://your-backend-url.onrender.com`
-  - `NODE_ENV=production` (can be set after build, or don't set it at all)
+  - `NODE_ENV=production` (optional, doesn't affect build if using npx)
 
 ## Why This Happens
 

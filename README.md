@@ -71,7 +71,7 @@ For production deployment on Render, see the detailed guide:
 **Quick Start:**
 1. Create a Static Site in Render dashboard
 2. Set Root Directory: `sco-admin-dashboard`
-3. Build Command: `npm ci --include=dev && npm run build`
+3. Build Command: `npm install && npx vite build`
 4. Publish Directory: `dist`
 5. Add environment variable: `VITE_API_URL=https://your-backend-url.onrender.com`
 

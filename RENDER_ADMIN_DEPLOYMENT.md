@@ -19,10 +19,11 @@ This guide will help you deploy the SCO Admin Dashboard to Render.
    - Select the `sco-admin-dashboard` directory as the root directory
 
 2. **Configure Build Settings:**
-   - **Build Command:** `npm install && npm run build`
+   - **Build Command:** `npm install && npx vite build`
    - **Publish Directory:** `dist`
    - **Node Version:** 18 or higher (Render default should work)
-   - **Note:** If build fails with "vite: not found", use: `NODE_ENV=development npm install && npm run build`
+   - **Important:** Make sure the entire command is entered correctly - it should be `npx vite build` (not `npx vi`)
+   - **Alternative:** If using Bun, use: `bun install && bun run build`
 
 3. **Environment Variables:**
    Add the following environment variables in Render dashboard:
@@ -48,9 +49,9 @@ If you prefer to deploy as a Web Service instead:
 2. **Configure Build Settings:**
    - **Root Directory:** `sco-admin-dashboard`
    - **Environment:** `Node`
-   - **Build Command:** `npm install && npm run build`
+   - **Build Command:** `npm install && npx vite build`
    - **Start Command:** `npm run preview` (requires a preview script) or use a static server
-   - **Note:** If build fails with "vite: not found", use: `NODE_ENV=development npm install && npm run build`
+   - **Alternative:** If using Bun, use: `bun install && bun run build`
 
 3. **Environment Variables:**
    Same as Option 1 above.
@@ -119,15 +120,19 @@ If you see CORS errors in the browser console:
 ### Build Errors
 
 If the build fails:
-1. **"vite: not found" error:** This means devDependencies weren't installed. Use this build command:
+1. **"vite: not found" error:** Use `npx vite build` instead of `npm run build`:
    ```
-   NODE_ENV=development npm install && npm run build
+   npm install && npx vite build
    ```
-   Or set `NODE_ENV=development` in environment variables before the build step
+   Or if Render is using Bun, use:
+   ```
+   bun install && bun run build
+   ```
 2. Check that all dependencies are in `package.json`
 3. Verify Node.js version (Render uses Node 18+ by default)
 4. Check build logs in Render dashboard for specific errors
 5. Try clearing build cache in Render dashboard and redeploy
+6. **If Bun is interfering:** You can disable automatic Bun install by ensuring `package-lock.json` exists and is committed
 
 ### API Connection Issues
 
