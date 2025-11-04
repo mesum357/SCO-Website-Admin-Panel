@@ -21,6 +21,8 @@ This guide will help you deploy the SCO Admin Dashboard to Render.
 2. **Configure Build Settings:**
    - **Build Command:** `npm install && npm run build`
    - **Publish Directory:** `dist`
+   - **Node Version:** 18 or higher (Render default should work)
+   - **Note:** If build fails with "vite: not found", use: `NODE_ENV=development npm install && npm run build`
 
 3. **Environment Variables:**
    Add the following environment variables in Render dashboard:
@@ -48,6 +50,7 @@ If you prefer to deploy as a Web Service instead:
    - **Environment:** `Node`
    - **Build Command:** `npm install && npm run build`
    - **Start Command:** `npm run preview` (requires a preview script) or use a static server
+   - **Note:** If build fails with "vite: not found", use: `NODE_ENV=development npm install && npm run build`
 
 3. **Environment Variables:**
    Same as Option 1 above.
@@ -116,9 +119,15 @@ If you see CORS errors in the browser console:
 ### Build Errors
 
 If the build fails:
-1. Check that all dependencies are in `package.json`
-2. Verify Node.js version (Render uses Node 18+ by default)
-3. Check build logs in Render dashboard for specific errors
+1. **"vite: not found" error:** This means devDependencies weren't installed. Use this build command:
+   ```
+   NODE_ENV=development npm install && npm run build
+   ```
+   Or set `NODE_ENV=development` in environment variables before the build step
+2. Check that all dependencies are in `package.json`
+3. Verify Node.js version (Render uses Node 18+ by default)
+4. Check build logs in Render dashboard for specific errors
+5. Try clearing build cache in Render dashboard and redeploy
 
 ### API Connection Issues
 

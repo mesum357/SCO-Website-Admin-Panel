@@ -6,7 +6,7 @@ services:
   - type: web
     name: sco-admin-dashboard
     env: node
-    buildCommand: cd sco-admin-dashboard && npm install && npm run build
+    buildCommand: cd sco-admin-dashboard && npm ci --include=dev && npm run build
     staticPublishPath: ./sco-admin-dashboard/dist
     envVars:
       - key: NODE_ENV
@@ -21,7 +21,7 @@ services:
 # Note: For Static Site deployment (recommended), use Render dashboard:
 # 1. Create new Static Site
 # 2. Root Directory: sco-admin-dashboard
-# 3. Build Command: npm install && npm run build
+# 3. Build Command: npm ci --include=dev && npm run build
 # 4. Publish Directory: dist
 # 5. Add environment variable: VITE_API_URL=https://your-backend-url.onrender.com
 
