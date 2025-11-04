@@ -19,11 +19,11 @@ This guide will help you deploy the SCO Admin Dashboard to Render.
    - Select the `sco-admin-dashboard` directory as the root directory
 
 2. **Configure Build Settings:**
-   - **Build Command:** `npm install && npx vite build`
+   - **Build Command:** `rm -rf node_modules bun.lockb && bun install && bun run build`
    - **Publish Directory:** `dist`
    - **Node Version:** 18 or higher (Render default should work)
-   - **Important:** Make sure the entire command is entered correctly - it should be `npx vite build` (not `npx vi`)
-   - **Alternative:** If using Bun, use: `bun install && bun run build`
+   - **Alternative:** If using npm: `rm -rf node_modules package-lock.json && npm install && npm run build`
+   - **Note:** The `rm -rf` forces a fresh install to ensure all dependencies (including newly added ones) are installed
 
 3. **Environment Variables:**
    Add the following environment variables in Render dashboard:
