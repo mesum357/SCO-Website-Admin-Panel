@@ -1,0 +1,27 @@
+# Render Configuration for Admin Panel
+# This file can be used for automatic deployment via Render Blueprint
+# For manual deployment, use the Render dashboard instead
+
+services:
+  - type: web
+    name: sco-admin-dashboard
+    env: node
+    buildCommand: cd sco-admin-dashboard && npm install && npm run build
+    staticPublishPath: ./sco-admin-dashboard/dist
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: VITE_API_URL
+        sync: false  # IMPORTANT: Set this in Render dashboard with your backend URL
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+
+# Note: For Static Site deployment (recommended), use Render dashboard:
+# 1. Create new Static Site
+# 2. Root Directory: sco-admin-dashboard
+# 3. Build Command: npm install && npm run build
+# 4. Publish Directory: dist
+# 5. Add environment variable: VITE_API_URL=https://your-backend-url.onrender.com
+

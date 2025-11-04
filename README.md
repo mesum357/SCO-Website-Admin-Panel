@@ -62,6 +62,21 @@ This project is built with:
 
 ## How can I deploy this project?
 
+### Render Deployment (Production)
+
+For production deployment on Render, see the detailed guide:
+- **[Render Deployment Guide](./RENDER_ADMIN_DEPLOYMENT.md)** - Complete deployment instructions
+- **[Environment Variables](./ENV_VARIABLES.md)** - Required environment variables
+
+**Quick Start:**
+1. Create a Static Site in Render dashboard
+2. Set Root Directory: `sco-admin-dashboard`
+3. Build Command: `npm install && npm run build`
+4. Publish Directory: `dist`
+5. Add environment variable: `VITE_API_URL=https://your-backend-url.onrender.com`
+
+### Lovable Deployment
+
 Simply open [Lovable](https://lovable.dev/projects/8238292f-f7d2-4f97-b52a-b0c31cf57f3b) and click on Share -> Publish.
 
 ## Can I connect a custom domain to my Lovable project?
