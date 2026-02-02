@@ -13,6 +13,7 @@ import {
   Images,
   Trophy,
   Video,
+  BookOpen,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -34,6 +35,7 @@ const navigation = [
   { name: "Gallery", href: "/admin/gallery", icon: Images },
   { name: "Success Stories", href: "/admin/success-stories", icon: Trophy },
   { name: "Video Stories", href: "/admin/video-stories", icon: Video },
+  { name: "Courses", href: "/admin/courses", icon: BookOpen },
 ];
 
 export function AdminLayout() {

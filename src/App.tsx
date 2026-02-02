@@ -15,6 +15,7 @@ import Freelancers from "./pages/admin/Freelancers";
 import Gallery from "./pages/admin/Gallery";
 import SuccessStories from "./pages/admin/SuccessStories";
 import VideoStories from "./pages/admin/VideoStories";
+import Courses from "./pages/admin/Courses";
 
 const queryClient = new QueryClient();
 
@@ -40,6 +41,7 @@ const App = () => (
               <Route path="gallery" element={<Gallery />} />
               <Route path="success-stories" element={<SuccessStories />} />
               <Route path="video-stories" element={<VideoStories />} />
+              <Route path="courses" element={<Courses />} />
             </Route>
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
