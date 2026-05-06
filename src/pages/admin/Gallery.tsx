@@ -48,6 +48,8 @@ const categories = [
   { value: 'Visits', label: 'Visits' },
   { value: 'Inaugurations', label: 'Inaugurations' }
 ];
+const MAX_GALLERY_FILE_SIZE_MB = 25;
+const MAX_GALLERY_FILE_SIZE_BYTES = MAX_GALLERY_FILE_SIZE_MB * 1024 * 1024;
 
 export default function Gallery() {
   const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false);
@@ -145,6 +147,12 @@ export default function Gallery() {
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
+      if (file.size > MAX_GALLERY_FILE_SIZE_BYTES) {
+        toast.error(`Image too large. Max allowed size is ${MAX_GALLERY_FILE_SIZE_MB}MB.`);
+        setSelectedFile(null);
+        setPreviewUrl('');
+        return;
+      }
       setSelectedFile(file);
       const url = URL.createObjectURL(file);
       setPreviewUrl(url);
@@ -245,6 +253,9 @@ export default function Gallery() {
                   onChange={handleFileSelect}
                   className="mt-1"
                 />
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Max upload size: {MAX_GALLERY_FILE_SIZE_MB}MB
+                </p>
                 {previewUrl && (
                   <div className="mt-2">
                     <img
