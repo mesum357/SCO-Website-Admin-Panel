@@ -19,7 +19,8 @@ import {
   Plus,
   Image as ImageIcon,
   Calendar,
-  Tag
+  Tag,
+  Star
 } from 'lucide-react';
 import { api } from '@/lib/api';
 
@@ -32,6 +33,7 @@ interface GalleryItem {
   tags: string[];
   link?: string;
   isActive: boolean;
+  isFeatured: boolean;
   likes: number;
   views: number;
   createdAt: string;
@@ -42,12 +44,9 @@ interface GalleryItem {
 }
 
 const categories = [
-  { value: 'FLH', label: 'FLH (Freelancing Hubs)' },
-  { value: 'STP', label: 'STP (Software Technology Parks)' },
   { value: 'Events', label: 'Events' },
-  { value: 'Team', label: 'Team' },
-  { value: 'Workshops', label: 'Workshops' },
-  { value: 'Community', label: 'Community' }
+  { value: 'Visits', label: 'Visits' },
+  { value: 'Inaugurations', label: 'Inaugurations' }
 ];
 
 export default function Gallery() {
@@ -57,9 +56,10 @@ export default function Gallery() {
   const [uploadForm, setUploadForm] = useState({
     title: '',
     description: '',
-    category: '',
+    category: 'Events',
     tags: '',
-    link: ''
+    link: '',
+    isFeatured: false
   });
   const [editForm, setEditForm] = useState({
     title: '',
@@ -67,7 +67,8 @@ export default function Gallery() {
     category: '',
     tags: '',
     link: '',
-    isActive: true
+    isActive: true,
+    isFeatured: false
   });
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string>('');
@@ -132,13 +133,13 @@ export default function Gallery() {
   });
 
   const resetUploadForm = () => {
-    setUploadForm({ title: '', description: '', category: '', tags: '' });
+    setUploadForm({ title: '', description: '', category: 'Events', tags: '', link: '', isFeatured: false });
     setSelectedFile(null);
     setPreviewUrl('');
   };
 
   const resetEditForm = () => {
-    setEditForm({ title: '', description: '', category: '', tags: '', isActive: true });
+    setEditForm({ title: '', description: '', category: 'Events', tags: '', link: '', isActive: true, isFeatured: false });
   };
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -164,6 +165,7 @@ export default function Gallery() {
     formData.append('description', uploadForm.description);
     formData.append('category', uploadForm.category);
     formData.append('tags', uploadForm.tags);
+    formData.append('featured', String(uploadForm.isFeatured));
     if (uploadForm.link) {
       formData.append('link', uploadForm.link);
     }
@@ -179,7 +181,8 @@ export default function Gallery() {
       category: item.category,
       tags: item.tags.join(', '),
       link: item.link || '',
-      isActive: item.isActive
+      isActive: item.isActive,
+      isFeatured: item.isFeatured
     });
     setIsEditDialogOpen(true);
   };
@@ -286,6 +289,16 @@ export default function Gallery() {
                   </SelectContent>
                 </Select>
               </div>
+              <div className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  id="featured"
+                  checked={uploadForm.isFeatured}
+                  onChange={(e) => setUploadForm({ ...uploadForm, isFeatured: e.target.checked })}
+                  className="rounded"
+                />
+                <Label htmlFor="featured">Mark as featured image</Label>
+              </div>
               <div>
                 <Label htmlFor="tags">Tags</Label>
                 <Input
@@ -318,10 +331,10 @@ export default function Gallery() {
         </Dialog>
       </div>
 
-      {/* Gallery Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {isLoading ? (
-          Array.from({ length: 6 }).map((_, i) => (
+      {/* Gallery by Category */}
+      {isLoading ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {Array.from({ length: 6 }).map((_, i) => (
             <Card key={i} className="animate-pulse">
               <div className="h-48 bg-muted rounded-t-lg"></div>
               <CardContent className="p-4">
@@ -329,16 +342,34 @@ export default function Gallery() {
                 <div className="h-3 bg-muted rounded w-2/3"></div>
               </CardContent>
             </Card>
-          ))
-        ) : galleryItems.length === 0 ? (
-          <div className="col-span-full text-center py-12">
-            <ImageIcon className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-            <h3 className="text-lg font-semibold mb-2">No gallery images</h3>
-            <p className="text-muted-foreground">Upload your first gallery image to get started.</p>
-          </div>
-        ) : (
-          galleryItems.map((item) => (
-            <Card key={item._id} className="overflow-hidden">
+          ))}
+        </div>
+      ) : galleryItems.length === 0 ? (
+        <div className="text-center py-12">
+          <ImageIcon className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
+          <h3 className="text-lg font-semibold mb-2">No gallery images</h3>
+          <p className="text-muted-foreground">Upload your first gallery image to get started.</p>
+        </div>
+      ) : (
+        <div className="space-y-8">
+          {categories.map((category) => {
+            const categoryItems = galleryItems.filter((item: GalleryItem) => item.category === category.value);
+            return (
+              <section key={category.value} className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-2xl font-semibold">{category.label}</h2>
+                  <Badge variant="outline">{categoryItems.length} images</Badge>
+                </div>
+                {categoryItems.length === 0 ? (
+                  <Card>
+                    <CardContent className="py-8 text-center text-muted-foreground">
+                      No images in this category yet.
+                    </CardContent>
+                  </Card>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {categoryItems.map((item) => (
+                      <Card key={item._id} className="overflow-hidden">
               <div className="relative">
                 <img
                   src={item.imageUrl.startsWith('http') ? item.imageUrl : `${import.meta.env.VITE_API_URL}${item.imageUrl}`}
@@ -351,18 +382,26 @@ export default function Gallery() {
                   </Badge>
                 </div>
                 <div className="absolute top-2 right-2">
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    onClick={() => toggleActive(item)}
-                    className="h-8 w-8 p-0"
-                  >
-                    {item.isActive ? (
-                      <Eye className="w-4 h-4" />
-                    ) : (
-                      <EyeOff className="w-4 h-4" />
+                  <div className="flex items-center gap-1">
+                    {item.isFeatured && (
+                      <Badge className="bg-amber-500 hover:bg-amber-500 text-white">
+                        <Star className="w-3 h-3 mr-1" />
+                        Featured
+                      </Badge>
                     )}
-                  </Button>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => toggleActive(item)}
+                      className="h-8 w-8 p-0"
+                    >
+                      {item.isActive ? (
+                        <Eye className="w-4 h-4" />
+                      ) : (
+                        <EyeOff className="w-4 h-4" />
+                      )}
+                    </Button>
+                  </div>
                 </div>
               </div>
               <CardContent className="p-4">
@@ -428,10 +467,15 @@ export default function Gallery() {
                   </AlertDialog>
                 </div>
               </CardContent>
-            </Card>
-          ))
-        )}
-      </div>
+                      </Card>
+                    ))}
+                  </div>
+                )}
+              </section>
+            );
+          })}
+        </div>
+      )}
 
       {/* Edit Dialog */}
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
@@ -505,6 +549,16 @@ export default function Gallery() {
                 className="rounded"
               />
               <Label htmlFor="edit-active">Active (visible on frontend)</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <input
+                type="checkbox"
+                id="edit-featured"
+                checked={editForm.isFeatured}
+                onChange={(e) => setEditForm({ ...editForm, isFeatured: e.target.checked })}
+                className="rounded"
+              />
+              <Label htmlFor="edit-featured">Featured (show on homepage slider)</Label>
             </div>
             <div className="flex justify-end space-x-2">
               <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>
