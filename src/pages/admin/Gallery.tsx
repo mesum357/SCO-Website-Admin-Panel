@@ -160,6 +160,13 @@ export default function Gallery() {
   };
 
   const handleUpload = () => {
+    const trimmedTitle = uploadForm.title.trim();
+
+    if (!trimmedTitle) {
+      toast.error('Image title is required');
+      return;
+    }
+
     if (!selectedFile && !uploadForm.link) {
       toast.error('Please either upload an image file or provide an image link');
       return;
@@ -169,7 +176,7 @@ export default function Gallery() {
     if (selectedFile) {
       formData.append('image', selectedFile);
     }
-    formData.append('title', uploadForm.title);
+    formData.append('title', trimmedTitle);
     formData.append('description', uploadForm.description);
     formData.append('category', uploadForm.category);
     formData.append('tags', uploadForm.tags);
@@ -267,9 +274,10 @@ export default function Gallery() {
                 )}
               </div>
               <div>
-                <Label htmlFor="title">Title</Label>
+                <Label htmlFor="title">Title *</Label>
                 <Input
                   id="title"
+                  required
                   value={uploadForm.title}
                   onChange={(e) => setUploadForm({ ...uploadForm, title: e.target.value })}
                   placeholder="Enter image title"
